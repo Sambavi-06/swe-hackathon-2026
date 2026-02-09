@@ -53,33 +53,34 @@ def run_command(command, cwd=None, log_file=None):
         return -1, str(e)
 
 def call_claude(system_prompt, user_message):
-    """Call Anthropic API using requests for simplicity in zero-shot environment."""
-    import requests
+    """Call Anthropic API using the official SDK for reliable communication."""
+    from anthropic import Anthropic
     
-    url = "https://api.anthropic.com/v1/messages"
-    headers = {
-        "x-api-key": API_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json"
-    }
+    if not API_KEY:
+        print("Error: ANTHROPIC_API_KEY environment variable is missing.")
+        return None
+
+    client = Anthropic(api_key=API_KEY)
     
     for model in MODELS:
-        data = {
-            "model": model,
-            "max_tokens": 4096,
-            "system": system_prompt,
-            "messages": [{"role": "user", "content": user_message}]
-        }
-        
         log_event("request", user_message, model=model)
         
         try:
-            response = requests.post(url, headers=headers, json=data)
-            response.raise_for_status()
-            res_json = response.json()
-            content = res_json['content'][0]['text']
+            print(f"Calling Claude with model {model}...")
+            message = client.messages.create(
+                model=model,
+                max_tokens=4096,
+                system=system_prompt,
+                messages=[{"role": "user", "content": user_message}]
+            )
             
-            log_event("response", content, model=model, usage=res_json.get('usage', {}))
+            content = message.content[0].text
+            usage = {
+                "input_tokens": message.usage.input_tokens,
+                "output_tokens": message.usage.output_tokens
+            }
+            
+            log_event("response", content, model=model, usage=usage)
             return content
         except Exception as e:
             print(f"Error with model {model}: {e}")
