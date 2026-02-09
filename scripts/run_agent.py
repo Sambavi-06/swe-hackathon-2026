@@ -11,9 +11,8 @@ from datetime import datetime, timezone
 # Configuration
 API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 MODELS = [
-    "claude-3-5-sonnet-20241022",
-    "claude-3-5-sonnet-20240620",
-    "claude-3-opus-20240229",
+    "claude-3-5-sonnet-latest",
+    "claude-3-5-haiku-latest",
 ]
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 TASK_FILE = os.path.join(SCRIPT_DIR, "task.yaml")
