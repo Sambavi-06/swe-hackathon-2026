@@ -25,7 +25,12 @@ Build and verify an end-to-end solution using GitHub Actions to automate SWE-ben
 
 ## How to Run
 1. Fork this repository.
-2. Add your `CLAUDE_API_KEY` (Anthropic API key) to the repository secrets.
+2. **Add your Anthropic API key as a repository secret:**
+   - Go to your repository's Settings > Secrets and variables > Actions
+   - Click "New repository secret"
+   - Name: `CLAUDE_API_KEY`
+   - Value: Your Anthropic API key (starts with `sk-ant-`)
+   - Click "Add secret"
 3. Trigger the workflow manually via `Actions > SWE-bench Pro Evaluation > run workflow` or push a change to `main`.
 
 ## Verification Artifacts

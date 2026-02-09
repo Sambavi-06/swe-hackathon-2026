@@ -38,6 +38,12 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
         run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "Error: CLAUDE_API_KEY secret is not set in repository secrets." >&2
+            echo "Please add your Anthropic API key as a repository secret named 'CLAUDE_API_KEY'." >&2
+            echo "Go to: Settings > Secrets and variables > Actions > New repository secret" >&2
+            exit 1
+          fi
           python scripts/run_agent.py
 
       - name: Extract Metrics
