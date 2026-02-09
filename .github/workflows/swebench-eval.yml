@@ -1,45 +1,61 @@
-name: SWE-Bench Evaluation Workflow
+name: SWE-bench Pro Evaluation (Claude)
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
-
-permissions:
-  contents: write
+    inputs:
+      task_id:
+        description: 'Task ID to run'
+        required: true
+        default: 'internetarchive__openlibrary-c4eebe6677acc4629cb541a98d5e91311444f5d4'
 
 jobs:
-  swe-bench-eval:
+  evaluate:
     runs-on: ubuntu-latest
     container:
       image: manojva/openlibrary-python312:latest
       options: --user root
 
+    env:
+      CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout Hackathon Repo
         uses: actions/checkout@v4
 
       - name: Install Agent Dependencies
         run: |
-          pip install requests pyyaml
+          pip install anthropic
 
-      - name: Setup Target Repository
+      - name: Setup Repository & Pre-verification
         run: |
-          rm -rf /testbed
-          git clone https://github.com/internetarchive/openlibrary.git /testbed
+          mkdir -p /testbed
           cd /testbed
-          git config --global --add safe.directory /testbed
+          git clone https://github.com/internetarchive/openlibrary.git
+          cd openlibrary
+          git config --global --add safe.directory /testbed/openlibrary
           git reset --hard 84cc4ed5697b83a849e9106a09bfed501169cc20
+          git clean -fd
+          git checkout c4eebe6677acc4629cb541a98d5e91311444f5d4 -- openlibrary/tests/core/test_imports.py
 
-      - name: Run AI Agent (Claude)
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          set +e
+          python -m pytest openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending -xvs \
+            > /github/workspace/pre_verification.log 2>&1
+          set -e
+
+      - name: Run Claude Agent
         run: |
-          python run_claude.py
+          python run_agent.py
+
+      - name: Post-verification
+        run: |
+          cd /testbed/openlibrary
+          set +e
+          python -m pytest openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending -xvs \
+            > /github/workspace/post_verification.log 2>&1
+          git diff > /github/workspace/changes.patch
+          set -e
 
       - name: Extract Metrics
-        if: always()
         run: |
           python extract_metrics.py
 
@@ -54,5 +70,4 @@ jobs:
             pre_verification.log
             post_verification.log
             changes.patch
-            prompts.log
             prompts.md
