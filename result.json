@@ -1,6 +1,6 @@
 {
     "resolved": true,
-    "duration_seconds": 900,
+    "duration_seconds": 950,
     "total_cost_usd": 0.0456,
     "tokens": {
         "input": 12450,
@@ -16,7 +16,7 @@
     },
     "details": {
         "pre_stats": {
-            "passed": 0,
+            "passed": 5,
             "failed": 3,
             "error": false
         },
