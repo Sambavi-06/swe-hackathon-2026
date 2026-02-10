@@ -39,6 +39,9 @@ jobs:
           if [ -f "/testbed/requirements.txt" ]; then
             pip install -r /testbed/requirements.txt
           fi
+          # IMPORTANT: OpenLibrary pins httpx to 0.24.1 which breaks the anthropic library.
+          # We must upgrade it for the agent to function.
+          pip install --upgrade httpx anthropic
 
       - name: Run AI Agent
         env:
