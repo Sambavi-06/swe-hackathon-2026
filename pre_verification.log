@@ -1,132 +1,200 @@
-﻿============================= test session starts =============================
-platform win32 -- Python 3.11.5, pytest-7.4.3, pluggy-1.6.0 -- C:\Users\Shamula\Documents\swe-hackathon-2026\.venv\Scripts\python.exe
+﻿============================= test session starts ==============================
+platform linux -- Python 3.12.2, pytest-9.0.2, pluggy-1.6.0 -- /usr/local/bin/python
 cachedir: .pytest_cache
-rootdir: C:\Users\Shamula\Documents\swe-hackathon-2026\openlibrary_repo
+rootdir: /testbed
 configfile: pyproject.toml
-plugins: anyio-4.12.1, asyncio-0.21.1, cov-4.1.0
-asyncio: mode=Mode.STRICT
-collecting ... collected 3 items
+plugins: anyio-4.12.1, rerunfailures-16.1, forked-1.6.0, xdist-3.8.0, mock-3.15.1
+collecting ... collected 8 items
 
-openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_1-expected0] FAILED [ 33%]
-openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_2-expected1] FAILED [ 66%]
-openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_4-expected2] FAILED [100%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_delete PASSED [ 12%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_delete_with_batch_id PASSED [ 25%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_pending_returns_none_with_no_results PASSED [ 37%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_pending_returns_pending PASSED [ 50%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_1-expected0] RERUN [ 62%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_1-expected0] RERUN [ 62%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_1-expected0] RERUN [ 62%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_1-expected0] FAILED [ 62%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_2-expected1] RERUN [ 75%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_2-expected1] RERUN [ 75%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_2-expected1] RERUN [ 75%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_2-expected1] FAILED [ 75%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_4-expected2] RERUN [ 87%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_4-expected2] RERUN [ 87%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_4-expected2] RERUN [ 87%]
+openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_4-expected2] FAILED [ 87%]
+openlibrary/tests/core/test_imports.py::TestBatchItem::test_add_items_legacy PASSED [100%]
 
-================================== FAILURES ===================================
-______ TestImportItem.test_find_staged_or_pending[unique_id_1-expected0] ______
-
-self = <core.test_imports.TestImportItem object at 0x000001649C45B9D0>
-import_item_db_staged_and_pending = <web.db.SqliteDB object at 0x000001649C1F9D50>
-ia_id = 'unique_id_1', expected = [1, 3]
-
-    @pytest.mark.parametrize(
-        'ia_id, expected',
-        [
-            ('unique_id_1', [1, 3]),
-            ('unique_id_2', [2]),
-            ('unique_id_4', []),
-        ],
-    )
-    def test_find_staged_or_pending(
-        self, import_item_db_staged_and_pending, ia_id, expected
-    ):
-        """Get some staged and pending items by ia_id identifiers."""
->       items = ImportItem.find_staged_or_pending([ia_id], sources=["idb"])
-E       AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
-
-openlibrary\tests\core\test_imports.py:163: AttributeError
----------------------------- Captured stderr setup ----------------------------
-0.06 (1): 
-CREATE TABLE import_item (
-    id serial primary key,
-    batch_id integer,
-    status text default 'pending',
-    error text,
-    ia_id text,
-    data text,
-    ol_key text,
-    comments text,
-    UNIQUE (batch_id, ia_id)
-);
-
-0.0 (2): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
-0.0 (3): SELECT last_insert_rowid();
-0.0 (4): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
-0.0 (5): SELECT last_insert_rowid();
-0.0 (6): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
-0.0 (7): SELECT last_insert_rowid();
--------------------------- Captured stderr teardown ---------------------------
-0.0 (8): delete from import_item;
-______ TestImportItem.test_find_staged_or_pending[unique_id_2-expected1] ______
-
-self = <core.test_imports.TestImportItem object at 0x000001649C459110>
-import_item_db_staged_and_pending = <web.db.SqliteDB object at 0x000001649C1F9D50>
-ia_id = 'unique_id_2', expected = [2]
-
-    @pytest.mark.parametrize(
-        'ia_id, expected',
-        [
-            ('unique_id_1', [1, 3]),
-            ('unique_id_2', [2]),
-            ('unique_id_4', []),
-        ],
-    )
-    def test_find_staged_or_pending(
-        self, import_item_db_staged_and_pending, ia_id, expected
-    ):
-        """Get some staged and pending items by ia_id identifiers."""
->       items = ImportItem.find_staged_or_pending([ia_id], sources=["idb"])
-E       AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
-
-openlibrary\tests\core\test_imports.py:163: AttributeError
----------------------------- Captured stderr setup ----------------------------
-0.0 (9): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
-0.0 (10): SELECT last_insert_rowid();
-0.0 (11): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
-0.0 (12): SELECT last_insert_rowid();
-0.0 (13): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
-0.0 (14): SELECT last_insert_rowid();
--------------------------- Captured stderr teardown ---------------------------
-0.0 (15): delete from import_item;
-______ TestImportItem.test_find_staged_or_pending[unique_id_4-expected2] ______
-
-self = <core.test_imports.TestImportItem object at 0x000001649C45BCD0>
-import_item_db_staged_and_pending = <web.db.SqliteDB object at 0x000001649C1F9D50>
-ia_id = 'unique_id_4', expected = []
-
-    @pytest.mark.parametrize(
-        'ia_id, expected',
-        [
-            ('unique_id_1', [1, 3]),
-            ('unique_id_2', [2]),
-            ('unique_id_4', []),
-        ],
-    )
-    def test_find_staged_or_pending(
-        self, import_item_db_staged_and_pending, ia_id, expected
-    ):
-        """Get some staged and pending items by ia_id identifiers."""
->       items = ImportItem.find_staged_or_pending([ia_id], sources=["idb"])
-E       AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
-
-openlibrary\tests\core\test_imports.py:163: AttributeError
----------------------------- Captured stderr setup ----------------------------
-0.0 (16): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
-0.0 (17): SELECT last_insert_rowid();
-0.0 (18): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
-0.0 (19): SELECT last_insert_rowid();
-0.0 (20): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
-0.0 (21): SELECT last_insert_rowid();
--------------------------- Captured stderr teardown ---------------------------
-0.0 (22): delete from import_item;
-0.0 (23): delete from import_item;
-============================== warnings summary ===============================
-..\.venv\Lib\site-packages\web\webapi.py:6
-  C:\Users\Shamula\Documents\swe-hackathon-2026\.venv\Lib\site-packages\web\webapi.py:6: DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13
+=================================== FAILURES ===================================
+______ TestImportItem.test_find_staged_or_pending[unique_id_1-expected0] _______
+openlibrary/tests/core/test_imports.py:163: in test_find_staged_or_pending
+    items = ImportItem.find_staged_or_pending([ia_id], sources=["idb"])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
+---------------------------- Captured stderr setup -----------------------------
+0.0 (40): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (41): SELECT last_insert_rowid();
+0.0 (42): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (43): SELECT last_insert_rowid();
+0.0 (44): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (45): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (46): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (47): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (48): SELECT last_insert_rowid();
+0.0 (49): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (50): SELECT last_insert_rowid();
+0.0 (51): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (52): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (53): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (54): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (55): SELECT last_insert_rowid();
+0.0 (56): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (57): SELECT last_insert_rowid();
+0.0 (58): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (59): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (60): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (61): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (62): SELECT last_insert_rowid();
+0.0 (63): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (64): SELECT last_insert_rowid();
+0.0 (65): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (66): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (46): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (53): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (60): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (67): delete from import_item;
+______ TestImportItem.test_find_staged_or_pending[unique_id_2-expected1] _______
+openlibrary/tests/core/test_imports.py:163: in test_find_staged_or_pending
+    items = ImportItem.find_staged_or_pending([ia_id], sources=["idb"])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
+---------------------------- Captured stderr setup -----------------------------
+0.0 (68): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (69): SELECT last_insert_rowid();
+0.0 (70): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (71): SELECT last_insert_rowid();
+0.0 (72): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (73): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (74): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (75): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (76): SELECT last_insert_rowid();
+0.0 (77): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (78): SELECT last_insert_rowid();
+0.0 (79): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (80): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (81): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (82): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (83): SELECT last_insert_rowid();
+0.0 (84): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (85): SELECT last_insert_rowid();
+0.0 (86): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (87): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (88): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (89): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (90): SELECT last_insert_rowid();
+0.0 (91): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (92): SELECT last_insert_rowid();
+0.0 (93): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (94): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (74): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (81): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (88): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (95): delete from import_item;
+______ TestImportItem.test_find_staged_or_pending[unique_id_4-expected2] _______
+openlibrary/tests/core/test_imports.py:163: in test_find_staged_or_pending
+    items = ImportItem.find_staged_or_pending([ia_id], sources=["idb"])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
+---------------------------- Captured stderr setup -----------------------------
+0.0 (96): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (97): SELECT last_insert_rowid();
+0.0 (98): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (99): SELECT last_insert_rowid();
+0.0 (100): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (101): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (102): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (103): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (104): SELECT last_insert_rowid();
+0.0 (105): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (106): SELECT last_insert_rowid();
+0.0 (107): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (108): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (109): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (110): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (111): SELECT last_insert_rowid();
+0.0 (112): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (113): SELECT last_insert_rowid();
+0.0 (114): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (115): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (116): delete from import_item;
+---------------------------- Captured stderr setup -----------------------------
+0.0 (117): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_1', 1, 'pending')
+0.0 (118): SELECT last_insert_rowid();
+0.0 (119): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (1, 'idb:unique_id_2', 2, 'staged')
+0.0 (120): SELECT last_insert_rowid();
+0.0 (121): INSERT INTO import_item (batch_id, ia_id, id, status) VALUES (2, 'idb:unique_id_1', 3, 'staged')
+0.0 (122): SELECT last_insert_rowid();
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (102): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (109): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (116): delete from import_item;
+--------------------------- Captured stderr teardown ---------------------------
+0.0 (123): delete from import_item;
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/site-packages/web/webapi.py:6
+  /usr/local/lib/python3.12/site-packages/web/webapi.py:6: DeprecationWarning: 'cgi' is deprecated and slated for removal in Python 3.13
     import cgi
 
+../usr/local/lib/python3.12/site-packages/babel/messages/checkers.py:160
+  /usr/local/lib/python3.12/site-packages/babel/messages/checkers.py:160: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    from pkg_resources import working_set
+
+../usr/local/lib/python3.12/site-packages/genshi/compat.py:141
+  /usr/local/lib/python3.12/site-packages/genshi/compat.py:141: DeprecationWarning: ast.Ellipsis is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    _ast_Ellipsis = ast.Ellipsis
+
+../usr/local/lib/python3.12/site-packages/genshi/compat.py:142
+  /usr/local/lib/python3.12/site-packages/genshi/compat.py:142: DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    _ast_Str = ast.Str
+
+../usr/local/lib/python3.12/site-packages/_pytest/config/__init__.py:1428
+  /usr/local/lib/python3.12/site-packages/_pytest/config/__init__.py:1428: PytestConfigWarning: Unknown config option: asyncio_mode
+  
+    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
+
+openlibrary/tests/core/test_imports.py::TestBatchItem::test_add_items_legacy
+  /usr/local/lib/python3.12/site-packages/web/db.py:508: DeprecationWarning: The default timestamp converter is deprecated as of Python 3.12; see the sqlite3 documentation for suggested replacement recipes
+    row = self.cursor.fetchone()
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ===========================
-FAILED openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_1-expected0]
-FAILED openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_2-expected1]
-FAILED openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_4-expected2]
-======================== 3 failed, 1 warning in 0.40s =========================
+=========================== short test summary info ============================
+FAILED openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_1-expected0] - AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
+FAILED openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_2-expected1] - AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
+FAILED openlibrary/tests/core/test_imports.py::TestImportItem::test_find_staged_or_pending[unique_id_4-expected2] - AttributeError: type object 'ImportItem' has no attribute 'find_staged_or_pending'
+=============== 3 failed, 5 passed, 6 warnings, 9 rerun in 0.16s ===============
